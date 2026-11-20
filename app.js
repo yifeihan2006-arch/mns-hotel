@@ -2,8 +2,15 @@ import { photoMarkup, bindPhotos } from './photo-ui.js';
 import { catalog } from './attractions.js';
 import { planRoute } from './route-planner.js';
 import { mountStay } from './hotel-stay.js';
+import { mountWorkshops, workshopCopy, workshopCandidatesMarkup } from './workshops.js?v=1';
 const $ = s => document.querySelector(s);
-let lang = localStorage.getItem('mns-lang') || 'zh';
+let lang = 'zh';
+let workshopInterested = false;
+try {
+  const savedLanguage = localStorage.getItem('mns-lang');
+  if (['zh', 'en', 'pt'].includes(savedLanguage)) lang = savedLanguage;
+  workshopInterested = JSON.parse(localStorage.getItem('mns-plan'))?.workshopInterested === true;
+} catch {}
 let tab = 'stay';
 let filter = 'all';
 const tr = (zh, en, pt) => ({ zh, en, pt })[lang];
@@ -155,6 +162,7 @@ function render() {
       ['plan', tr('行程规划', 'Plan a trip', 'Planear')],
       ['places', tr('探索澳门', 'Explore Macao', 'Explorar')],
       ['food', tr('多元美食', 'Food & flavours', 'Sabores')],
+      ['workshops', workshopCopy[lang].title],
     ]
       .map(
         ([k, v]) =>
@@ -173,6 +181,7 @@ function render() {
   if (tab === 'places') explore();
   if (tab === 'food') food();
   if (tab === 'stay') stay();
+  if (tab === 'workshops') mountWorkshops($('#view'), { lang });
 }
 function explore() {
   $('#view').innerHTML = `<h2>${tr('澳门景点全览','Explore Macao attractions','Explore as atrações de Macau')}</h2>
@@ -213,7 +222,13 @@ function planner() {
     <label>${tr('每天出发时间', 'Daily start', 'Início diário')}<input id="start" type="time" value="10:00" required></label>
     <label>${tr('每天返回酒店的最晚时间', 'Latest daily hotel return', 'Hora limite de regresso ao hotel')}<input id="end" type="time" value="18:00" required></label>
     <label>${tr('天气条件', 'Weather scenario', 'Cenário meteorológico')}<select id="weather"><option value="dry">${tr('晴天／阴天', 'Dry', 'Sem chuva')}</option><option value="rain">${tr('雨天，优先室内', 'Rain: indoor activities', 'Chuva: atividades interiores')}</option></select></label>
-    </div><div class="actions"><button class="primary" type="submit">${tr('为我规划行程', 'Plan my trip', 'Planear a minha viagem')}</button></div><p id="plan-error" class="error" role="alert"></p></form></section><div id="result" aria-live="polite"></div>`;
+    </div><div class="workshop-interest"><label class="workshop-interest-label"><input id="workshop-interest" type="checkbox" ${workshopInterested ? 'checked' : ''} aria-controls="workshop-preview">${workshopCopy[lang].interest}</label>
+    <div id="workshop-preview" ${workshopInterested ? '' : 'hidden'}>${workshopCandidatesMarkup(lang)}</div></div>
+    <div class="actions"><button class="primary" type="submit">${tr('为我规划行程', 'Plan my trip', 'Planear a minha viagem')}</button></div><p id="plan-error" class="error" role="alert"></p></form></section><div id="result" aria-live="polite"></div>`;
+  $('#workshop-interest').onchange = event => {
+    workshopInterested = event.target.checked;
+    $('#workshop-preview').hidden = !workshopInterested;
+  };
   $('#plan-form').onsubmit = e => { e.preventDefault(); build(); };
   try {
     const saved = JSON.parse(localStorage.getItem('mns-plan'));
@@ -237,6 +252,8 @@ function build() {
       budget: Number($('#budget').value), rain: $('#weather').value === 'rain',
       pace: $('#pace').value, theme: $('#theme').value,
     });
+    // Unconfirmed workshops remain candidates; never add a stop or charge here.
+    result.workshopInterested = $('#workshop-interest').checked;
     if (!result.count) {
       $('#plan-error').textContent = tr('当前时段或预算不足以安排游览，请延长时间或调整预算。', 'This time window or budget is too limited. Please adjust and try again.', 'O tempo ou orçamento é insuficiente. Ajuste e tente novamente.');
       return;
@@ -260,6 +277,7 @@ function showPlan(r) {
     }).join(''):`<p>${tr('此日留作自由活动，可延长游览时间重新规划。','Free time; extend the time window to add activities.','Tempo livre; alargue o horário para incluir atividades.')}</p>`}</div>`).join('')}
     <p class="hint">${tr('每人全程模拟预算','Illustrative total per person','Estimativa total por pessoa')}: MOP ${r.estimate} / MOP ${r.budget}<br>${tr('餐饮','Food','Refeições')} ${r.meals} · ${tr('交通','Transport','Transporte')} ${r.transport} · ${tr('体验预留','Experiences allowance','Experiências')} ${r.tickets}<br>${tr('不含住宿与购物。费用为规划假设，不是商户报价。','Excludes accommodation and shopping. Allowances are planning assumptions, not operator quotes.','Não inclui alojamento e compras. Valores ilustrativos, não são cotações.')}</p>
     <p>${tr('景点开放、休馆、预约及门票需在出发前通过来源链接核实。交通时间是含步行、等候的估算，非实时导航。慢游模式减少站点并预留较长休息与移动时间。','Check opening, closures, reservations and tickets through the source links before travel. Transfer times include estimated walking and waiting, not live navigation. Slow pace allows fewer stops and longer transfers.','Confirme horários, encerramentos, reservas e bilhetes nas fontes antes da viagem. Tempos de deslocação estimados, sem navegação em tempo real. O ritmo lento inclui menos paragens.')}</p>
+    ${r.workshopInterested ? workshopCandidatesMarkup(lang) : ''}
     <button id="print-plan">${tr('打印／存为PDF','Print / save PDF','Imprimir / guardar PDF')}</button></section>`;
   bindPhotos($('#result'), lang);
   $('#print-plan').onclick=()=>window.print();
@@ -269,8 +287,7 @@ function stay() {
 }
 $('#lang').onchange = e => {
   lang = e.target.value;
-  localStorage.setItem('mns-lang', lang);
+  try { localStorage.setItem('mns-lang', lang); } catch {}
   render();
 };
 render();
-

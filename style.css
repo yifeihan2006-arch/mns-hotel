@@ -1,0 +1,291 @@
+:root {
+  --green: #123f3b;
+  --gold: #c4a46a;
+  --ivory: #f8f5ee;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--ivory);
+  color: var(--green);
+  font:
+    16px/1.65 system-ui,
+    sans-serif;
+}
+header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 5%;
+  background: white;
+  border-bottom: 1px solid #dfd8c9;
+}
+.mark {
+  font: 64px Georgia;
+  color: var(--green);
+  line-height: 1;
+  border-bottom: 3px solid var(--gold);
+}
+header b {
+  font: 26px Georgia;
+  letter-spacing: 5px;
+}
+small {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+}
+header select {
+  margin-left: auto;
+  max-width: 120px;
+}
+main {
+  max-width: 1120px;
+  margin: auto;
+  padding: 28px 22px;
+}
+h1 {
+  font-size: clamp(32px, 5vw, 54px);
+  line-height: 1.2;
+  max-width: 700px;
+  margin: 24px 0;
+}
+h2 {
+  font-size: 26px;
+}
+h3 {
+  margin: 10px 0;
+}
+p {
+  margin: 10px 0;
+}
+button,
+select,
+input,
+textarea {
+  font: inherit;
+  border: 1px solid #c7cbbf;
+  border-radius: 8px;
+  padding: 11px;
+  background: white;
+  color: var(--green);
+}
+button {
+  cursor: pointer;
+}
+button:hover {
+  border-color: var(--gold);
+}
+button.active,
+.primary {
+  background: var(--green);
+  color: white;
+}
+.primary {
+  border: 0;
+}
+nav,
+.filters,
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 22px 0;
+}
+.hero {
+  padding: 18px 0 30px;
+  border-bottom: 1px solid #dcd6c9;
+}
+.eyebrow {
+  letter-spacing: 3px;
+  color: #84642e;
+  font-size: 14px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.card,
+.panel {
+  background: white;
+  border: 1px solid #deded2;
+  border-radius: 14px;
+  padding: 24px;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.card p {
+  flex: 1;
+}
+.card .actions {
+  margin: 0;
+}
+.tag {
+  font-size: 14px;
+  color: #876830;
+}
+a {
+  color: var(--green);
+  text-underline-offset: 4px;
+}
+.formgrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+textarea {
+  width: 100%;
+  min-height: 100px;
+}
+.full {
+  grid-column: 1/-1;
+}
+.timeline {
+  border-left: 2px solid var(--gold);
+  padding-left: 22px;
+  margin: 20px 0;
+}
+.stop {
+  padding: 10px 0 20px;
+  border-bottom: 1px solid #eee;
+}
+.muted,
+footer {
+  color: #576c65;
+}
+.error {
+  color: #9e382d;
+}
+footer {
+  text-align: center;
+  padding: 35px 22px;
+  font-size: 14px;
+}
+.price {
+  font-size: 24px;
+  font-family: Georgia;
+}
+.hint {
+  padding: 16px;
+  background: #f1eee5;
+  border-radius: 8px;
+}
+.selects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.selects label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 7px 12px;
+  border: 1px solid #ddd;
+  border-radius: 30px;
+}
+.selects input {
+  width: 17px;
+  height: 17px;
+}
+#result {
+  margin-top: 24px;
+}
+@media (max-width: 760px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .formgrid {
+    grid-template-columns: 1fr;
+  }
+  header {
+    gap: 10px;
+    padding: 15px;
+  }
+  header b {
+    font-size: 21px;
+  }
+  small {
+    font-size: 10px;
+    letter-spacing: 0;
+  }
+  .mark {
+    font-size: 48px;
+  }
+  header select {
+    width: 86px;
+    padding: 8px;
+  }
+  main {
+    padding: 20px 16px;
+  }
+  .panel {
+    padding: 18px;
+  }
+}
+@media print {
+  header,
+  nav,
+  button,
+  footer {
+    display: none;
+  }
+  .panel {
+    border: 0;
+  }
+}
+
+/* Attraction photography */
+.attraction-photo { margin: 0 0 12px; width: 100%; }
+.photo-open { display: block; position: relative; overflow: hidden; width: 100%; padding: 0; border: 0; border-radius: 10px; background: #e1e9e5; text-align: left; }
+.photo-open img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 2; object-fit: cover; transition: transform 180ms ease; }
+.photo-open:hover img { transform: scale(1.025); }
+.photo-open:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+.photo-enlarge { position: absolute; right: 10px; bottom: 10px; background: rgba(18,63,59,.85); padding: 3px 9px; color: white; border-radius: 6px; font-size: 14px; }
+.attraction-photo figcaption { margin-top: 6px; font-size: 14px; }
+.photo-compact { max-width: 440px; margin: 12px 0; }
+.photo-error { padding: 18px; background: #edf0e8; border-radius: 10px; }
+[hidden] { display: none !important; }
+#photo-lightbox { padding: 24px; border: 0; border-radius: 14px; width: min(1000px, 94vw); max-height: 94vh; color: var(--green); }
+#photo-lightbox::backdrop { background: rgba(0,20,18,.75); }
+#photo-lightbox img { display: block; width: 100%; max-height: 70vh; object-fit: contain; background: #edf0e8; }
+#photo-lightbox h2 { clear: both; padding-top: 8px; }
+.lightbox-close { float: right; }
+@media (prefers-reduced-motion: reduce) { .photo-open img { transition: none; } }
+@media print { .photo-open { display: block; } .photo-enlarge { display: none; } .photo-compact { max-width: 240px; } }
+
+
+/* Date-based hotel quotations */
+.rate-search, .room-grid {
+  margin-top: 20px;
+}
+.rate-policy summary {
+  cursor: pointer;
+  padding: 12px 0;
+  font-weight: 600;
+}
+.nightly-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border-top: 1px solid #deded2;
+}
+.nightly-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid #deded2;
+}
+.nightly-row strong {
+  white-space: nowrap;
+}

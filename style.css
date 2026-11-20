@@ -22,11 +22,21 @@ header {
   background: white;
   border-bottom: 1px solid #dfd8c9;
 }
-.mark {
-  font: 64px Georgia;
-  color: var(--green);
-  line-height: 1;
-  border-bottom: 3px solid var(--gold);
+.hotel-brand {
+  display: block;
+  flex: 0 1 285px;
+  min-width: 0;
+}
+.hotel-brand img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.hotel-brand:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: 4px;
 }
 header b {
   font: 26px Georgia;
@@ -219,8 +229,8 @@ footer {
     font-size: 10px;
     letter-spacing: 0;
   }
-  .mark {
-    font-size: 48px;
+  .hotel-brand {
+    flex-basis: 225px;
   }
   header select {
     width: 86px;

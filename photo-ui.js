@@ -1,6 +1,6 @@
 import { attractionPhotos } from './attraction-photos.js';
 import { foodPhotos } from './food-photos.js';
-import { roomPhotos } from './room-photos.js?v=appendix-20261121';
+import { roomPhotos } from './room-photos.js?v=bed-review-20261121';
 import { hotelPhotos } from './hotel-gallery.js?v=appendix-20261121';
 const photoCatalog = { ...attractionPhotos, ...foodPhotos, ...roomPhotos, ...hotelPhotos };
 

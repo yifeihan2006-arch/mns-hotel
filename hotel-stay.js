@@ -1,8 +1,10 @@
 import { baseRates, benchmark, quoteStay } from './room-pricing.js';
 import { hotelGalleryMarkup } from './hotel-gallery.js?v=appendix-20261121';
+import { roomPhotoTitles } from './room-photos.js?v=bed-review-20261121';
 
 let state = { room: 0, checkin: '', checkout: '', rooms: 1, guests: 2 };
 let saved = null;
+let bedPhoto = 'twin';
 try {
   const draft = JSON.parse(localStorage.getItem('mns-book'));
   if (draft?.version === 2 && Number.isInteger(draft.room) && baseRates[draft.room]
@@ -17,6 +19,7 @@ export function mountStay(container, options) {
   const { lang, roomNames, photoMarkup, bindPhotos } = options;
   const tr = (zh, en, pt) => ({ zh, en, pt })[lang] || en;
   const room = index => roomNames[index][{ zh: 0, en: 1, pt: 2 }[lang]];
+  const photoTitle = id => roomPhotoTitles[id][{ zh: 0, en: 1, pt: 2 }[lang]];
   const money = value => 'MOP ' + value.toLocaleString('en-US', { maximumFractionDigits: 2 });
   const kind = type => ({
     weekday: tr('平日', 'Weekday', 'Dia útil'),
@@ -63,8 +66,10 @@ export function mountStay(container, options) {
     '<div class="grid room-grid">',
     ...roomNames.map((_, index) => [
       '<article class="card" data-room-card="', index, '">',
-      photoMarkup('room-' + index, room(index), lang),
-      index === 0 ? '<details class="room-variants"><summary>' + tr('查看雙床配置概念圖', 'View twin-bed concept', 'Ver conceito com duas camas') + '</summary>' + photoMarkup('room-0-twin', tr('街區故事房：雙床配置', 'Neighbourhood Story Room · twin beds', 'Quarto Histórias do Bairro · duas camas'), lang) + '</details>' : '',
+      index === 0 ? '<div class="room-photo-selector"><div class="room-photo-tabs" role="group" aria-label="' + tr('床型圖片展示', 'Bed layout images', 'Imagens das camas') + '"><button type="button" data-bed-photo="twin">' + tr('雙床圖片', 'Twin-bed image', 'Duas camas') + '</button><button type="button" data-bed-photo="king">' + tr('大床圖片', 'King-bed image', 'Cama king') + '</button></div>'
+        + '<div data-bed-view="twin">' + photoMarkup('room-0-twin', photoTitle('room-0-twin'), lang) + '</div>'
+        + '<div data-bed-view="king">' + photoMarkup('room-0', photoTitle('room-0'), lang) + '</div></div>'
+        : photoMarkup('room-' + index, photoTitle('room-' + index), lang),
       '<span class="tag">MNS HOTEL</span><h3>', room(index), '</h3>',
       '<div class="price" data-room-price="', index, '"></div>',
       '<p class="muted" data-room-range="', index, '"></p>',
@@ -81,6 +86,19 @@ export function mountStay(container, options) {
     '</button></div><p id="book-result" role="status"></p></form></section>',
     hotelGalleryMarkup(lang, photoMarkup),
   ].join('');
+
+  function updateBedPhoto() {
+    container.querySelectorAll('[data-bed-view]').forEach(view => { view.hidden = view.dataset.bedView !== bedPhoto; });
+    container.querySelectorAll('[data-bed-photo]').forEach(button => {
+      const active = button.dataset.bedPhoto === bedPhoto;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
+  }
+  container.querySelectorAll('[data-bed-photo]').forEach(button => {
+    button.onclick = () => { bedPhoto = button.dataset.bedPhoto; updateBedPhoto(); };
+  });
+  updateBedPhoto();
 
   ['checkin', 'checkout', 'rooms', 'guests'].forEach(key => {
     $('#' + key).value = state[key];

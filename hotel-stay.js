@@ -1,5 +1,5 @@
 import { baseRates, benchmark, quoteStay } from './room-pricing.js';
-import { hotelGalleryMarkup } from './hotel-gallery.js?v=appendix-20261121';
+import { hotelGalleryMarkup } from './hotel-gallery.js?v=photo-gallery-20261121';
 import { roomPhotoTitles } from './room-photos.js?v=bed-review-20261121';
 
 let state = { room: 0, checkin: '', checkout: '', rooms: 1, guests: 2 };

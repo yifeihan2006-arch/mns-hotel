@@ -1,7 +1,7 @@
 import { attractionPhotos } from './attraction-photos.js';
 import { foodPhotos } from './food-photos.js';
-import { roomPhotos } from './room-photos.js?v=bed-review-20261121';
-import { hotelPhotos } from './hotel-gallery.js?v=photo-gallery-20261121';
+import { roomPhotos } from './room-photos.js?v=facility-captions-20261121';
+import { hotelPhotos } from './hotel-gallery.js?v=facility-captions-20261121';
 const photoCatalog = { ...attractionPhotos, ...foodPhotos, ...roomPhotos, ...hotelPhotos };
 
 const label = (lang, zh, en, pt) => ({ zh, en, pt })[lang] || en;
@@ -15,7 +15,7 @@ export function photoMarkup(id, title, lang, compact = false) {
       <img src="${safe(photo.url)}" alt="${safe(title)}" loading="lazy" decoding="async" width="720" height="480" referrerpolicy="no-referrer">
       <span class="photo-enlarge" aria-hidden="true">${label(lang, '放大', 'Enlarge', 'Ampliar')}</span>
     </button>
-    <figcaption>${photo.note ? `<span>${safe(photo.note[({zh:0,en:1,pt:2})[lang]] || photo.note[1])}</span><br>` : ''}<a class="photo-credit" href="${safe(photo.page)}" target="_blank" rel="noopener noreferrer">${label(lang, '照片来源', 'Photo source', 'Fonte da fotografia')}</a></figcaption>
+    <figcaption>${photo.note ? `<span>${safe(photo.note[({zh:0,en:1,pt:2})[lang]] || photo.note[1])}</span>` : ''}${photo.hideCredit ? '' : `${photo.note ? '<br>' : ''}<a class="photo-credit" href="${safe(photo.page)}" target="_blank" rel="noopener noreferrer">${label(lang, '照片来源', 'Photo source', 'Fonte da fotografia')}</a>`}</figcaption>
     <div class="photo-error" hidden><p>${label(lang, '照片暂时无法加载。', 'Photo temporarily unavailable.', 'Fotografia temporariamente indisponível.')}</p><button type="button" class="photo-retry">${label(lang, '重新加载', 'Retry', 'Tentar novamente')}</button></div>
   </figure>`;
 }
@@ -45,7 +45,7 @@ export function bindPhotos(container, lang) {
       if (!fallback && photo.backup?.url && photo.backup.url !== photo.url) {
         fallback = true;
         active = photo.backup;
-        if (active.page) credit.href = active.page;
+        if (credit && active.page) credit.href = active.page;
         image.src = active.url;
         return;
       }
@@ -61,7 +61,7 @@ export function bindPhotos(container, lang) {
     figure.querySelector('.photo-retry').onclick = () => {
       fallback = false;
       active = photo;
-      credit.href = photo.page;
+      if (credit) credit.href = photo.page;
       error.hidden = true;
       open.hidden = false;
       image.hidden = false;
@@ -74,8 +74,15 @@ export function bindPhotos(container, lang) {
       dialog.querySelector('img').alt = image.alt;
       dialog.querySelector('.lightbox-close').textContent = label(lang, '关闭', 'Close', 'Fechar');
       const source = dialog.querySelector('a');
-      source.href = active.page || photo.page;
-      source.textContent = label(lang, '查看照片来源', 'View photo source', 'Consultar a fonte');
+      source.hidden = Boolean(photo.hideCredit);
+      source.parentElement.hidden = Boolean(photo.hideCredit);
+      if (photo.hideCredit) {
+        source.removeAttribute('href');
+        source.textContent = '';
+      } else {
+        source.href = active.page || photo.page;
+        source.textContent = label(lang, '查看照片来源', 'View photo source', 'Consultar a fonte');
+      }
       dialog.showModal();
     };
     if (image.complete && image.naturalWidth === 0) image.onerror();

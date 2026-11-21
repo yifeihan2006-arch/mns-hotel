@@ -1,9 +1,5 @@
-// Latest business plan: Appendix D (king/twin) and Appendices E–H.
-const rooms = [
-  ['room-0', 22, 'D'], ['room-0-twin', 23, 'D'],
-  ['room-1', 24, 'E'], ['room-2', 25, 'F'],
-  ['room-3', 26, 'G'], ['room-4', 27, 'H'],
-];
+// Hotel room images and equipment descriptions.
+const rooms = [['room-0',22],['room-0-twin',23],['room-1',24],['room-2',25],['room-3',26],['room-4',27]];
 export const roomPhotoTitles = {
   'room-0': ['街區故事房：一張大床', 'Neighbourhood Story Room · one king bed', 'Quarto Histórias do Bairro · uma cama king'],
   'room-0-twin': ['街區故事房：兩張獨立單人床', 'Neighbourhood Story Room · two separate single beds', 'Quarto Histórias do Bairro · duas camas individuais separadas'],
@@ -12,11 +8,16 @@ export const roomPhotoTitles = {
   'room-3': ['文化工作室房：創作桌與閱讀區', 'Culture Studio Room · creative desk and reading area', 'Estúdio Cultural · mesa criativa e zona de leitura'],
   'room-4': ['澳門文化套房：獨立客廳與臥室', 'Macao Heritage Suite · separate living room and bedroom', 'Suite Património de Macau · sala e quarto separados'],
 };
-export const roomPhotos = Object.fromEntries(rooms.map(([id, image, appendix]) => {
+const descriptions = {
+  'room-0': ['大床、書桌及行李置物架。', 'King bed, writing desk and luggage rack.', 'Cama king, secretária e suporte para bagagem.'],
+  'room-0-twin': ['兩張獨立單人床、床頭櫃及書桌。', 'Two separate single beds, bedside table and writing desk.', 'Duas camas individuais separadas, mesa de cabeceira e secretária.'],
+  'room-1': ['大床及配有座椅、邊桌的閱讀角。', 'Large bed and a reading corner with an armchair and side table.', 'Cama grande e canto de leitura com poltrona e mesa de apoio.'],
+  'room-2': ['一張大床、一張單人床及書桌。', 'One large bed, one single bed and a writing desk.', 'Uma cama grande, uma cama individual e uma secretária.'],
+  'room-3': ['創作書桌、書架及閱讀座椅。', 'Creative desk, bookshelves and a reading armchair.', 'Mesa criativa, estantes e poltrona de leitura.'],
+  'room-4': ['分隔式客廳與臥室，配有沙發及茶几。', 'Separate living room and bedroom, with a sofa and coffee table.', 'Sala e quarto separados, com sofá e mesa de centro.'],
+};
+export const roomPhotos = Object.fromEntries(rooms.map(([id, image]) => {
   const url = `./resources/appendix-20261121/image-${image}.webp`;
-  return [id, {url, page: url, fit: 'contain', note: [
-    `附錄 ${appendix} · ${roomPhotoTitles[id][0]} · 概念效果圖`,
-    `Appendix ${appendix} · ${roomPhotoTitles[id][1]} · Concept rendering`,
-    `Apêndice ${appendix} · ${roomPhotoTitles[id][2]} · Visualização conceptual`,
-  ]}];
+  return [id, {url, page: url, fit: 'contain', hideCredit: true,
+    note: descriptions[id].map((text, i) => roomPhotoTitles[id][i] + ' · ' + text)}];
 }));

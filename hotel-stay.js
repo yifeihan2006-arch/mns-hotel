@@ -1,4 +1,5 @@
 import { baseRates, benchmark, quoteStay } from './room-pricing.js';
+import { hotelGalleryMarkup } from './hotel-gallery.js?v=appendix-20261121';
 
 let state = { room: 0, checkin: '', checkout: '', rooms: 1, guests: 2 };
 let saved = null;
@@ -63,6 +64,7 @@ export function mountStay(container, options) {
     ...roomNames.map((_, index) => [
       '<article class="card" data-room-card="', index, '">',
       photoMarkup('room-' + index, room(index), lang),
+      index === 0 ? '<details class="room-variants"><summary>' + tr('查看雙床配置概念圖', 'View twin-bed concept', 'Ver conceito com duas camas') + '</summary>' + photoMarkup('room-0-twin', tr('街區故事房：雙床配置', 'Neighbourhood Story Room · twin beds', 'Quarto Histórias do Bairro · duas camas'), lang) + '</details>' : '',
       '<span class="tag">MNS HOTEL</span><h3>', room(index), '</h3>',
       '<div class="price" data-room-price="', index, '"></div>',
       '<p class="muted" data-room-range="', index, '"></p>',
@@ -77,6 +79,7 @@ export function mountStay(container, options) {
     '<button class="primary" type="submit">',
     tr('计算并保存预订草案', 'Calculate & save booking draft', 'Calcular e guardar rascunho'),
     '</button></div><p id="book-result" role="status"></p></form></section>',
+    hotelGalleryMarkup(lang, photoMarkup),
   ].join('');
 
   ['checkin', 'checkout', 'rooms', 'guests'].forEach(key => {

@@ -1,8 +1,8 @@
-import { photoMarkup, bindPhotos } from './photo-ui.js';
+import { photoMarkup, bindPhotos } from './photo-ui.js?v=appendix-20261121';
 import { catalog } from './attractions.js';
 import { planRoute } from './route-planner.js';
-import { mountStay } from './hotel-stay.js';
-import { mountWorkshops, workshopCopy, workshopCandidatesMarkup } from './workshops.js?v=1';
+import { mountStay } from './hotel-stay.js?v=appendix-20261121';
+import { mountWorkshops, workshopCopy, workshopCandidatesMarkup } from './workshops.js?v=appendix-20261121';
 const $ = s => document.querySelector(s);
 let lang = 'zh';
 let workshopInterested = false;
@@ -181,7 +181,7 @@ function render() {
   if (tab === 'places') explore();
   if (tab === 'food') food();
   if (tab === 'stay') stay();
-  if (tab === 'workshops') mountWorkshops($('#view'), { lang });
+  if (tab === 'workshops') mountWorkshops($('#view'), { lang, photoMarkup, bindPhotos });
 }
 function explore() {
   $('#view').innerHTML = `<h2>${tr('澳门景点全览','Explore Macao attractions','Explore as atrações de Macau')}</h2>

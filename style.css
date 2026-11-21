@@ -301,6 +301,16 @@ footer {
 }
 
 /* Independent cultural workshops */
+.hotel-gallery { margin-top: 24px; }
+.hotel-gallery .card { padding: 16px; min-width: 0; }
+.hotel-gallery h4 { margin: 0 0 10px; font-size: 1rem; }
+.hotel-gallery-grid { margin-top: 16px; }
+.photo-contain .photo-open img { object-fit: contain; background: var(--ivory); }
+.hotel-gallery-details { margin-top: 18px; border-top: 1px solid #deded2; }
+.hotel-gallery-details > summary, .room-variants > summary { cursor: pointer; min-height: 44px; padding: 12px 0; }
+.room-variants .attraction-photo { margin-top: 8px; }
+.workshop-venue { margin-top: 20px; }
+.workshop-venue .attraction-photo { max-width: 800px; }
 .workshop-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

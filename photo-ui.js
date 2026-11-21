@@ -1,7 +1,8 @@
 import { attractionPhotos } from './attraction-photos.js';
 import { foodPhotos } from './food-photos.js';
-import { roomPhotos } from './room-photos.js';
-const photoCatalog = { ...attractionPhotos, ...foodPhotos, ...roomPhotos };
+import { roomPhotos } from './room-photos.js?v=appendix-20261121';
+import { hotelPhotos } from './hotel-gallery.js?v=appendix-20261121';
+const photoCatalog = { ...attractionPhotos, ...foodPhotos, ...roomPhotos, ...hotelPhotos };
 
 const label = (lang, zh, en, pt) => ({ zh, en, pt })[lang] || en;
 const safe = value => String(value || '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
@@ -9,7 +10,7 @@ const safe = value => String(value || '').replace(/[&<>"']/g, character => ({ '&
 export function photoMarkup(id, title, lang, compact = false) {
   const photo = photoCatalog[id];
   if (!photo) return '';
-  return `<figure class="attraction-photo ${compact ? 'photo-compact' : ''}" data-photo-id="${safe(id)}">
+  return `<figure class="attraction-photo ${compact ? 'photo-compact' : ''} ${photo.fit === 'contain' ? 'photo-contain' : ''}" data-photo-id="${safe(id)}">
     <button type="button" class="photo-open" aria-label="${safe(label(lang, '放大照片：', 'Enlarge photo: ', 'Ampliar fotografia: ') + title)}">
       <img src="${safe(photo.url)}" alt="${safe(title)}" loading="lazy" decoding="async" width="720" height="480" referrerpolicy="no-referrer">
       <span class="photo-enlarge" aria-hidden="true">${label(lang, '放大', 'Enlarge', 'Ampliar')}</span>

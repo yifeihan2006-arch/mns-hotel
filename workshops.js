@@ -37,7 +37,7 @@ export const workshopCopy = {
     title: '文化工作坊', standalone: '可獨立預約，無須購買住宿套票。',
     intro: '在酒店認識澳門街區文化，製作屬於自己的紀念作品。',
     price: '價格', priceValue: '每人 MOP 220', duration: '時長', durationValue: '每場 90 分鐘',
-    capacity: '人數', capacityValue: '每場最多八人', venue: '地點', venueValue: '酒店二樓工作坊',
+    capacity: '人數', capacityValue: '每場最多八人', venue: '地點', venueValue: '酒店地面層 Culture Commons 文化工作坊',
     leader: '帶領者', leaderValue: '本地工藝師或社區合作方',
     select: '選擇此活動', formTitle: '保存工作坊預約意向', activity: '選擇活動', participants: '參加人數',
     people: '人', total: '所選人數的工作坊費用', separate: '工作坊費用獨立計算，不會自動加進房費；此處不收款。',
@@ -56,7 +56,7 @@ export const workshopCopy = {
     title: 'Cultural Workshops', standalone: 'Book separately. No accommodation package is required.',
     intro: 'Discover Macao’s neighbourhood culture at the hotel and make a personal keepsake.',
     price: 'Price', priceValue: 'MOP 220 per person', duration: 'Duration', durationValue: '90 minutes per session',
-    capacity: 'Group size', capacityValue: 'Maximum eight participants per session', venue: 'Location', venueValue: 'Hotel workshop on the second floor',
+    capacity: 'Group size', capacityValue: 'Maximum eight participants per session', venue: 'Location', venueValue: 'Ground-floor Culture Commons workshop at the hotel',
     leader: 'Facilitator', leaderValue: 'Local artisan or community partner',
     select: 'Choose this activity', formTitle: 'Save a workshop booking intention', activity: 'Choose an activity', participants: 'Participants',
     people: 'participants', total: 'Workshop cost for the selected participants', separate: 'Workshop charges are separate and are not automatically added to room charges. No payment is taken here.',
@@ -75,7 +75,7 @@ export const workshopCopy = {
     title: 'Oficinas culturais', standalone: 'Reserve separadamente. Não é necessário adquirir um pacote de alojamento.',
     intro: 'Descubra a cultura dos bairros de Macau no hotel e crie uma recordação pessoal.',
     price: 'Preço', priceValue: 'MOP 220 por pessoa', duration: 'Duração', durationValue: '90 minutos por sessão',
-    capacity: 'Participantes', capacityValue: 'Máximo de oito participantes por sessão', venue: 'Local', venueValue: 'Oficina no segundo piso do hotel',
+    capacity: 'Participantes', capacityValue: 'Máximo de oito participantes por sessão', venue: 'Local', venueValue: 'Oficina Culture Commons no rés do chão do hotel',
     leader: 'Orientação', leaderValue: 'Artesão local ou parceiro da comunidade',
     select: 'Escolher esta atividade', formTitle: 'Guardar intenção de reserva de uma oficina', activity: 'Escolher atividade', participants: 'Número de participantes',
     people: 'participantes', total: 'Custo da oficina para os participantes selecionados', separate: 'O custo da oficina é separado e não é adicionado automaticamente ao alojamento. Não são efetuados pagamentos aqui.',
@@ -112,7 +112,7 @@ export function workshopCandidatesMarkup(lang) {
     <p><strong>${c.pending}</strong></p><p>${c.future}</p></aside>`;
 }
 
-export function mountWorkshops(container, { lang }) {
+export function mountWorkshops(container, { lang, photoMarkup = () => '', bindPhotos = () => {} }) {
   const c = copy(lang), l = language(lang);
   const $ = selector => container.querySelector(selector);
   let saved = null;
@@ -126,6 +126,7 @@ export function mountWorkshops(container, { lang }) {
   const facts = `<dl class="workshop-facts">${['price', 'duration', 'capacity', 'venue', 'leader'].map(key => `<div><dt>${c[key]}</dt><dd>${c[key + 'Value']}</dd></div>`).join('')}</dl>`;
   container.innerHTML = `<section class="panel workshop-intro"><div class="eyebrow">STAY · DISCOVER · CONNECT</div>
     <h2>${c.title}</h2><p>${c.intro}</p><p class="hint workshop-standalone"><strong>${c.standalone}</strong></p></section>
+    <section class="panel workshop-venue"><h3>${c.venueValue}</h3>${photoMarkup('hotel-workshop', c.venueValue, lang)}</section>
     <div class="workshop-grid">${workshops.map(w => `<article class="card workshop-card"><h3>${w.names[l]}</h3>
       <p class="workshop-standalone"><strong>${c.standalone}</strong></p><p>${w.descriptions[l]}</p>${facts}
       <div class="actions"><button type="button" data-workshop="${w.id}">${c.select}</button></div></article>`).join('')}</div>
@@ -183,4 +184,5 @@ export function mountWorkshops(container, { lang }) {
   };
   updateTotal();
   if (saved) showSaved();
+  bindPhotos(container, lang);
 }

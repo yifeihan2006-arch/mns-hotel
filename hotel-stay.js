@@ -1,10 +1,9 @@
-import { baseRates, benchmark, quoteStay } from './room-pricing.js';
-import { hotelGalleryMarkup } from './hotel-gallery.js?v=facility-captions-20261121';
-import { roomPhotoTitles } from './room-photos.js?v=facility-captions-20261121';
+import { baseRates, quoteStay } from './room-pricing.js';
+import { hotelGalleryMarkup } from './hotel-gallery.js?v=simple-rooms-20261121';
+import { roomPhotoTitles } from './room-photos.js?v=simple-rooms-20261121';
 
 let state = { room: 0, checkin: '', checkout: '', rooms: 1, guests: 2 };
 let saved = null;
-let bedPhoto = 'twin';
 try {
   const draft = JSON.parse(localStorage.getItem('mns-book'));
   if (draft?.version === 2 && Number.isInteger(draft.room) && baseRates[draft.room]
@@ -41,15 +40,8 @@ export function mountStay(container, options) {
     '</h2><p>', tr('120间客房 · 五种房型 · 本酒店专属预订', '120 rooms · Five room types · Our hotel only', '120 quartos · Cinco tipologias · Apenas o nosso hotel'),
     '</p><p class="hint">', disclaimer, '</p>',
     '<details class="rate-policy"><summary>',
-    tr('房价说明与定价参考', 'Rate policy and market reference', 'Preços e referência de mercado'),
+    tr('房價說明', 'Rate policy', 'Condições de preços'),
     '</summary><p>',
-    tr(
-      '参考2025年澳门酒店协会会员四星级酒店全年平均房价 MOP 1,124.6，街区故事房平日定价 MOP 850，低约 MOP 275。该统计为历史平均值，并非统一定价标准或同日同房型报价；其他房型按空间与配置加价。',
-      'The 2025 annual average for four-star Macau Hotel Association member hotels was MOP 1,124.6. Our entry room weekday base is MOP 850, about MOP 275 lower. This historical average is not a regulated tariff or a matched room/date quote. Larger room types carry a premium.',
-      'A média anual de 2025 dos hotéis de quatro estrelas associados foi MOP 1.124,6. O quarto de entrada custa MOP 850 em dias úteis, cerca de MOP 275 abaixo. A média histórica não é uma tarifa oficial nem uma comparação para o mesmo quarto e data. Tipologias superiores têm suplemento.'
-    ),
-    ' <a href="', benchmark.source, '" target="_blank" rel="noopener">',
-    tr('查看统计来源', 'View statistical source', 'Consultar fonte estatística'), '</a></p><p>',
     tr(
       '本酒店演示规则：周日至周四为平日价，周五和周六上调20%；每年1月1–3日、5月1–5日、10月1–7日、12月24–31日设为旺季，上调50%。旺季覆盖周末，不重复加价。这些是酒店自行设定的价格区间，不代表法定假期或实时市场预测。',
       'Hotel demo rules: Sunday–Thursday base rates; Friday–Saturday +20%. Hotel peak windows are Jan 1–3, May 1–5, Oct 1–7 and Dec 24–31 each year at +50%. Peak overrides weekend pricing. These are hotel settings, not an official holiday calendar or a live market forecast.',
@@ -63,13 +55,10 @@ export function mountStay(container, options) {
     '</div><p class="muted">',
     tr('按入住每一晚的日期计价，退房日不计费。可查询1–90晚。', 'Rates follow each occupied night; checkout is excluded. Quote 1–90 nights.', 'Preços por noite ocupada, sem cobrar o dia de saída. Entre 1 e 90 noites.'),
     '</p><p id="rate-error" class="error" role="alert"></p></section>',
-    '<div class="grid room-grid">',
-    ...roomNames.map((_, index) => [
+    '<p class="muted">', tr('價格由低到高', 'Price: low to high', 'Preço: do mais baixo ao mais alto'), '</p><div class="grid room-grid">',
+    ...roomNames.map((_, index) => index).sort((a,b) => baseRates[a] - baseRates[b]).map(index => [
       '<article class="card" data-room-card="', index, '">',
-      index === 0 ? '<div class="room-photo-selector"><div class="room-photo-tabs" role="group" aria-label="' + tr('床型圖片展示', 'Bed layout images', 'Imagens das camas') + '"><button type="button" data-bed-photo="twin">' + tr('雙床圖片', 'Twin-bed image', 'Duas camas') + '</button><button type="button" data-bed-photo="king">' + tr('大床圖片', 'King-bed image', 'Cama king') + '</button></div>'
-        + '<div data-bed-view="twin">' + photoMarkup('room-0-twin', photoTitle('room-0-twin'), lang) + '</div>'
-        + '<div data-bed-view="king">' + photoMarkup('room-0', photoTitle('room-0'), lang) + '</div></div>'
-        : photoMarkup('room-' + index, photoTitle('room-' + index), lang),
+      photoMarkup('room-' + index, photoTitle('room-' + index), lang),
       '<span class="tag">MNS HOTEL</span><h3>', room(index), '</h3>',
       '<div class="price" data-room-price="', index, '"></div>',
       '<p class="muted" data-room-range="', index, '"></p>',
@@ -86,19 +75,6 @@ export function mountStay(container, options) {
     '</button></div><p id="book-result" role="status"></p></form></section>',
     hotelGalleryMarkup(lang, photoMarkup),
   ].join('');
-
-  function updateBedPhoto() {
-    container.querySelectorAll('[data-bed-view]').forEach(view => { view.hidden = view.dataset.bedView !== bedPhoto; });
-    container.querySelectorAll('[data-bed-photo]').forEach(button => {
-      const active = button.dataset.bedPhoto === bedPhoto;
-      button.classList.toggle('active', active);
-      button.setAttribute('aria-pressed', String(active));
-    });
-  }
-  container.querySelectorAll('[data-bed-photo]').forEach(button => {
-    button.onclick = () => { bedPhoto = button.dataset.bedPhoto; updateBedPhoto(); };
-  });
-  updateBedPhoto();
 
   ['checkin', 'checkout', 'rooms', 'guests'].forEach(key => {
     $('#' + key).value = state[key];
@@ -132,20 +108,26 @@ export function mountStay(container, options) {
         $('#rate-error').textContent = quoteError(error);
       }
     }
+    const displayedRates = new Map();
     roomNames.forEach((_, index) => {
       const price = $('[data-room-price="' + index + '"]');
       const range = $('[data-room-range="' + index + '"]');
       if (validDates) {
         const quote = quoteStay(index, state.checkin, state.checkout);
         const rates = quote.nightly.map(night => night.rate);
+        displayedRates.set(index, quote.average);
         price.textContent = money(quote.average);
         range.textContent = tr('所选日期平均／间夜；', 'Selected-stay average / room-night; ', 'Média / quarto-noite; ')
           + money(Math.min(...rates)) + '–' + money(Math.max(...rates));
       } else {
+        displayedRates.set(index, baseRates[index]);
         price.textContent = money(baseRates[index]);
         range.textContent = tr('平日／间夜起；选择日期查看报价', 'Weekday base / room-night; select dates for a quote', 'Base / quarto-noite; escolha datas para cotação');
       }
     });
+    [...container.querySelectorAll('[data-room-card]')]
+      .sort((a,b) => displayedRates.get(Number(a.dataset.roomCard)) - displayedRates.get(Number(b.dataset.roomCard)))
+      .forEach(card => $('.room-grid').appendChild(card));
     if (!validDates) {
       $('#rate-quote').textContent = tr('请选择有效入住和退房日期。', 'Select valid check-in and checkout dates.', 'Escolha datas válidas.');
       return;

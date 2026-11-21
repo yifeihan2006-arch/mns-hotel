@@ -1,7 +1,7 @@
-import { photoMarkup, bindPhotos } from './photo-ui.js?v=facility-captions-20261121';
+import { photoMarkup, bindPhotos } from './photo-ui.js?v=simple-rooms-20261121';
 import { catalog } from './attractions.js';
 import { planRoute } from './route-planner.js';
-import { mountStay } from './hotel-stay.js?v=facility-captions-20261121';
+import { mountStay } from './hotel-stay.js?v=simple-rooms-20261121';
 import { mountWorkshops, workshopCopy, workshopCandidatesMarkup } from './workshops.js?v=appendix-20261121';
 const $ = s => document.querySelector(s);
 let lang = 'zh';
@@ -146,15 +146,15 @@ function room(i) {
   return roomNames[i][{ zh: 0, en: 1, pt: 2 }[lang]];
 }
 function links(p) {
-  return `<a target="_blank" rel="noopener" href="${source[p[9]]}">${tr('旅游局资料', 'MGTO source', 'Fonte DST')}</a> · <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p[3] + ' Macao')}">${tr('查看地图', 'Map', 'Mapa')}</a>`;
+  return `<a target="_blank" rel="noopener" href="${source[p[9]]}">${tr('景點資訊', 'Attraction details', 'Informações do local')}</a> · <a target="_blank" rel="noopener" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p[3] + ' Macao')}">${tr('查看地图', 'Map', 'Mapa')}</a>`;
 }
 function render() {
   document.documentElement.lang = lang === 'zh' ? 'zh-CN' : lang;
   $('#lang').value = lang;
   $('#notice').textContent = tr(
-    '课堂演示｜行程按规则生成，非实时AI。房价与交通为模拟估算；不会产生真实订单或付款。资料核对：2026年11月19日。',
-    'Classroom demo | Rule-based planner, not live AI. Illustrative prices and transport estimates; no real bookings or payments. Sources checked 19 Nov 2026.',
-    'Demonstração académica | Planeador por regras, sem IA em tempo real. Valores ilustrativos; sem reservas ou pagamentos reais. Fontes verificadas em 19/11/2026.'
+    '课堂演示｜行程按规则生成，非实时AI。房价与交通为模拟估算；不会产生真实订单或付款。',
+    'Classroom demo | Rule-based planner, not live AI. Illustrative prices and transport estimates; no real bookings or payments.',
+    'Demonstração académica | Planeador por regras, sem IA em tempo real. Valores ilustrativos; sem reservas ou pagamentos reais.'
   );
   $('#app').innerHTML =
     `<section class="hero"><div class="eyebrow">STAY · DISCOVER · CONNECT</div><h1>${tr('从街区故事，出发探索澳门。', 'Your stay. Your stories. Your Macao.', 'A sua estadia. As suas histórias. Macau.')}</h1><p>${tr('澳门街区故事酒店 · 专属旅程助手', 'Macao Neighbourhood Stories Hotel · Your travel companion', 'Macao Neighbourhood Stories Hotel · O seu companheiro de viagem')}</p></section><nav>${[
@@ -192,7 +192,7 @@ function explore() {
     const query=$('#place-search').value.trim().toLowerCase();
     const matches=places.filter(p=>(filter==='all'||filter==='0'||p[1]===Number(filter))&&p.slice(2,5).join(' ').toLowerCase().includes(query));
     $('#place-count').textContent=tr(`共 ${matches.length} 个景点`,`${matches.length} attractions`,`${matches.length} locais`);
-    $('#place-grid').innerHTML=matches.length?matches.map(p=>`<article class="card">${photoMarkup(p[0], name(p), lang)}<span class="tag">${areas()[p[1]]}</span><h3>${name(p)}</h3><p>${tr('建议游览预留','Suggested visit allowance','Tempo de visita sugerido')} ${p[5]} min</p>${p[0]==='dominic'?`<p>${tr('旅游局标注暂停开放，仅安排外观。','MGTO lists a closure: exterior only.','Encerramento indicado pela DST: apenas exterior.')}</p>`:''}${catalog.find(item=>item.id===p[0]).bookingOnly?`<p>${tr('须另行预约场次，不自动安排未确认的演出。','Book a performance separately; unconfirmed shows are not scheduled.','Reserve o espetáculo separadamente; sessões não confirmadas não são incluídas.')}</p>`:''}<div>${links(p)}</div></article>`).join(''):`<p>${tr('没有匹配的景点，请换个关键词。','No matches. Try another keyword.','Sem resultados. Tente outra palavra.')}</p>`;
+    $('#place-grid').innerHTML=matches.length?matches.map(p=>`<article class="card">${photoMarkup(p[0], name(p), lang)}<span class="tag">${areas()[p[1]]}</span><h3>${name(p)}</h3><p>${tr('建议游览预留','Suggested visit allowance','Tempo de visita sugerido')} ${p[5]} min</p>${p[0]==='dominic'?`<p>${tr('暫停開放，僅安排外觀。','Closed: exterior only.','Encerrado: apenas exterior.')}</p>`:''}${catalog.find(item=>item.id===p[0]).bookingOnly?`<p>${tr('须另行预约场次，不自动安排未确认的演出。','Book a performance separately; unconfirmed shows are not scheduled.','Reserve o espetáculo separadamente; sessões não confirmadas não são incluídas.')}</p>`:''}<div>${links(p)}</div></article>`).join(''):`<p>${tr('没有匹配的景点，请换个关键词。','No matches. Try another keyword.','Sem resultados. Tente outra palavra.')}</p>`;
     bindPhotos($('#place-grid'), lang);
   };
   $('#place-search').oninput=draw;
@@ -201,7 +201,7 @@ function explore() {
 }
 function food() {
   $('#view').innerHTML =
-    `<h2>${tr('一座城，多种味道', 'A city of many flavours', 'Uma cidade de muitos sabores')}</h2><p class="hint">${tr('按菜系探索旅游局收录的餐厅。价格、分店营业时间和过敏原请向商户核实。素食不等于无蛋奶或无过敏原。', 'Explore MGTO-listed dining options. Confirm prices, branch hours and allergens directly. Vegetarian does not necessarily mean vegan or allergen-free.', 'Explore opções listadas pela DST. Confirme preços, horários e alergénios com o restaurante. Vegetariano não significa vegano ou sem alergénios.')}</p><div class="grid">${foods.map((f, i) => `<article class="card">${photoMarkup(`food-${i}`, f[{ zh: 0, en: 1, pt: 2 }[lang]], lang)}<span class="tag">MACAO FLAVOURS</span><h3>${f[{ zh: 0, en: 1, pt: 2 }[lang]]}</h3><p>${f[{ zh: 3, en: 4, pt: 5 }[lang]]}</p><a href="${source[f[6]]}" target="_blank" rel="noopener">${tr('查看旅游局推荐', 'Explore MGTO recommendations', 'Consultar sugestões da DST')}</a></article>`).join('')}</div>`;
+    `<h2>${tr('一座城，多种味道', 'A city of many flavours', 'Uma cidade de muitos sabores')}</h2><p class="hint">${tr('按菜系探索多元餐飲選擇。价格、分店营业时间和过敏原请向商户核实。素食不等于无蛋奶或无过敏原。', 'Explore a variety of dining options. Confirm prices, branch hours and allergens directly. Vegetarian does not necessarily mean vegan or allergen-free.', 'Explore várias opções de restauração. Confirme preços, horários e alergénios com o restaurante. Vegetariano não significa vegano ou sem alergénios.')}</p><div class="grid">${foods.map((f, i) => `<article class="card">${photoMarkup(`food-${i}`, f[{ zh: 0, en: 1, pt: 2 }[lang]], lang)}<span class="tag">MACAO FLAVOURS</span><h3>${f[{ zh: 0, en: 1, pt: 2 }[lang]]}</h3><p>${f[{ zh: 3, en: 4, pt: 5 }[lang]]}</p><a href="${source[f[6]]}" target="_blank" rel="noopener">${tr('餐飲資訊', 'Dining details', 'Informações de restauração')}</a></article>`).join('')}</div>`;
   bindPhotos($('#view'), lang);
 }
 function planner() {
@@ -276,7 +276,7 @@ function showPlan(r) {
       return `<div class="stop">${photoMarkup(p[0], name(p), lang, true)}<b>${clock(s.time)}–${clock(s.end)} · ${name(p)}</b><p>${areas()[p[1]]} · ${tr('前段交通预留','Transfer allowance','Margem para deslocação')} ${s.travel} min</p>${links(p)}</div>`;
     }).join(''):`<p>${tr('此日留作自由活动，可延长游览时间重新规划。','Free time; extend the time window to add activities.','Tempo livre; alargue o horário para incluir atividades.')}</p>`}</div>`).join('')}
     <p class="hint">${tr('每人全程模拟预算','Illustrative total per person','Estimativa total por pessoa')}: MOP ${r.estimate} / MOP ${r.budget}<br>${tr('餐饮','Food','Refeições')} ${r.meals} · ${tr('交通','Transport','Transporte')} ${r.transport} · ${tr('体验预留','Experiences allowance','Experiências')} ${r.tickets}<br>${tr('不含住宿与购物。费用为规划假设，不是商户报价。','Excludes accommodation and shopping. Allowances are planning assumptions, not operator quotes.','Não inclui alojamento e compras. Valores ilustrativos, não são cotações.')}</p>
-    <p>${tr('景点开放、休馆、预约及门票需在出发前通过来源链接核实。交通时间是含步行、等候的估算，非实时导航。慢游模式减少站点并预留较长休息与移动时间。','Check opening, closures, reservations and tickets through the source links before travel. Transfer times include estimated walking and waiting, not live navigation. Slow pace allows fewer stops and longer transfers.','Confirme horários, encerramentos, reservas e bilhetes nas fontes antes da viagem. Tempos de deslocação estimados, sem navegação em tempo real. O ritmo lento inclui menos paragens.')}</p>
+    <p>${tr('景点开放、休馆、预约及门票需在出发前透過景點資訊連結核實。交通时间是含步行、等候的估算，非实时导航。慢游模式减少站点并预留较长休息与移动时间。','Check opening, closures, reservations and tickets through the attraction details before travel. Transfer times include estimated walking and waiting, not live navigation. Slow pace allows fewer stops and longer transfers.','Confirme horários, encerramentos, reservas e bilhetes nas informações dos locais antes da viagem. Tempos de deslocação estimados, sem navegação em tempo real. O ritmo lento inclui menos paragens.')}</p>
     ${r.workshopInterested ? workshopCandidatesMarkup(lang) : ''}
     <button id="print-plan">${tr('打印／存为PDF','Print / save PDF','Imprimir / guardar PDF')}</button></section>`;
   bindPhotos($('#result'), lang);

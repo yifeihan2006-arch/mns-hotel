@@ -308,8 +308,6 @@ footer {
 .photo-contain .photo-open img { object-fit: contain; background: var(--ivory); }
 .hotel-gallery-details { margin-top: 18px; border-top: 1px solid #deded2; }
 .hotel-gallery-details > summary { cursor: pointer; min-height: 44px; padding: 12px 0; }
-.room-photo-tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-.room-photo-tabs button { flex: 1 1 auto; min-height: 44px; }
 .workshop-venue { margin-top: 20px; }
 .workshop-venue .attraction-photo { max-width: 800px; }
 .workshop-grid {

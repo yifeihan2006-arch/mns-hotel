@@ -1,7 +1,7 @@
 import { photoMarkup, bindPhotos } from './photo-ui.js?v=simple-rooms-20261121';
 import { catalog } from './attractions.js';
 import { planRoute } from './route-planner.js';
-import { mountStay } from './hotel-stay.js?v=simple-rooms-20261121';
+import { mountStay } from './hotel-stay.js?v=report-rates-20261122';
 import { mountWorkshops, workshopCopy, workshopCandidatesMarkup } from './workshops.js?v=appendix-20261121';
 const $ = s => document.querySelector(s);
 let lang = 'zh';
